@@ -155,7 +155,6 @@
     <div id="multiplier-toggle" class="toggle" onclick="toggleMultiplier()">1.5x</div>
   </div>
   
-  
   <button onclick="calculateExtendedTime()">Calculate Extended Time</button>
   <button onclick="clearInputs()">Clear</button>
 
@@ -167,19 +166,20 @@
 </div>
 
 <script>
-  let amPm = "AM";
-  let multiplier = 1.5;
+  let amPm = "AM";  // AM/PM toggle
+  let multiplier = 1.5;  // Exam length multiplier toggle
 
   function toggleAmPm() {
-    amPm = amPm === "AM" ? "PM" : "AM";
-    document.getElementById("am-pm-toggle").innerText = amPm;
+    amPm = amPm === "AM" ? "PM" : "AM";  
+    document.getElementById("am-pm-toggle").innerText = amPm;  
   }
 
   function toggleMultiplier() {
-    multiplier = multiplier === 1.5 ? 2 : 1.5;
-    document.getElementById("multiplier-toggle").innerText = `${multiplier}x`;
+    multiplier = multiplier === 1.5 ? 2 : 1.5;  // 
+    document.getElementById("multiplier-toggle").innerText = `${multiplier}x`;  
   }
 
+  // Validate hour input and display warning if invalid
   document.getElementById("start-hour").addEventListener("input", function() {
     const hour = parseInt(this.value);
     if (hour < 1 || hour > 12) {
@@ -190,6 +190,7 @@
     }
   });
 
+  // Validate minute input and display warning if invalid
   document.getElementById("start-minute").addEventListener("input", function() {
     const minute = parseInt(this.value);
     if (minute < 0 || minute > 59) {
@@ -200,50 +201,55 @@
     }
   });
 
+  // Display warning message
   function displayWarning(message) {
     const warningDiv = document.getElementById("warning");
-    warningDiv.style.display = "block";
-    warningDiv.innerText = message;
+    warningDiv.style.display = "block"; 
+    warningDiv.innerText = message; 
   }
 
+  // Hide warning message
   function hideWarning() {
     document.getElementById("warning").style.display = "none";
   }
 
+  // Calculate extended time based on inputs
   function calculateExtendedTime() {
-  const startHour = parseInt(document.getElementById("start-hour").value);
-  const startMinute = parseInt(document.getElementById("start-minute").value);
-  const examLengthHours = parseInt(document.getElementById("exam-length-hours").value) || 0;
-  const examLengthMinutes = parseInt(document.getElementById("exam-length-minutes").value) || 0;
+    const startHour = parseInt(document.getElementById("start-hour").value);
+    const startMinute = parseInt(document.getElementById("start-minute").value);
+    const examLengthHours = parseInt(document.getElementById("exam-length-hours").value) || 0;
+    const examLengthMinutes = parseInt(document.getElementById("exam-length-minutes").value) || 0;
 
-  if (isNaN(startHour) || isNaN(startMinute) || (isNaN(examLengthHours) && isNaN(examLengthMinutes))) {
-    document.getElementById("output").innerText = "Please fill in all fields.";
-    return;
-  }
+    if (isNaN(startHour) || isNaN(startMinute) || (isNaN(examLengthHours) && isNaN(examLengthMinutes))) {
+      document.getElementById("output").innerText = "Please fill in all fields."; 
+      return;
+    }
 
-  let hours = startHour;
-  if (amPm === "PM" && hours < 12) hours += 12;
-  if (amPm === "AM" && hours === 12) hours = 0;
+    let hours = startHour;
+    if (amPm === "PM" && hours < 12) hours += 12;  // Convert to 24-hour format
+    if (amPm === "AM" && hours === 12) hours = 0;  
 
-  const totalExamMinutes = Math.ceil((examLengthHours * 60 + examLengthMinutes) * multiplier);
-  const endMinutes = hours * 60 + startMinute + totalExamMinutes;
+    const totalExamMinutes = Math.ceil((examLengthHours * 60 + examLengthMinutes) * multiplier);  // Calculate total exam minutes
+    const endMinutes = hours * 60 + startMinute + totalExamMinutes;  // Calculate end time in minutes
 
-  let endHours = Math.floor(endMinutes / 60) % 24;
-  let endMinutesOnly = endMinutes % 60;
-  const endAmPm = endHours >= 12 ? "PM" : "AM";
+    let endHours = Math.floor(endMinutes / 60) % 24;  // Convert back to hours
+    let endMinutesOnly = endMinutes % 60;  // Get remaining minutes
+    const endAmPm = endHours >= 12 ? "PM" : "AM";  // Fetch AM/PM for end time
 
-  if (endHours > 12) endHours -= 12;
-  if (endHours === 0) endHours = 12;
+    if (endHours > 12) endHours -= 12;  // Convert back to 12-hour format
+    if (endHours === 0) endHours = 12;  
 
-  const totalHours = Math.floor(totalExamMinutes / 60);
-  const totalMinutesOnly = totalExamMinutes % 60;
-
+    const totalHours = Math.floor(totalExamMinutes / 60);  // Calculate total exam hours
+    const totalMinutesOnly = totalExamMinutes % 60; 
+    
+  // Display output
   document.getElementById("output").innerText = 
     `End Time: ${endHours.toString().padStart(2, '0')}:${endMinutesOnly.toString().padStart(2, '0')} ${endAmPm}\n` +
     `Total Minutes: ${totalExamMinutes} minutes\n` +
     `Total Hours: ${totalHours} hours and ${totalMinutesOnly.toString().padStart(2, '0')} minutes`;
 }
-  
+
+// Reset calculator
 function clearInputs() {
     document.getElementById("start-hour").value = "";
     document.getElementById("start-minute").value = "00";
